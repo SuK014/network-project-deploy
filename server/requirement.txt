@@ -1,0 +1,5 @@
+python-socketio[asyncio]
+uvicorn[standard]
+pymongo
+python-dotenv
+bcrypt
