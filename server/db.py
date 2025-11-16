@@ -8,10 +8,16 @@ import bcrypt
 
 def connect_db() :
     # ++++++++ CONNECT DATABASE (MONGODB) .ENV ++++++++
-    load_dotenv(os.path.join(os.path.dirname(__file__), '.env'))
-    connection_string = os.getenv('MONGODB_URI')
+    # Try to load .env file if it exists (for local development)
+    env_path = os.path.join(os.path.dirname(__file__), '.env')
+    if os.path.exists(env_path):
+        load_dotenv(env_path)
+    
+    # Railway provides MONGODB_URI directly as environment variable
+    # Also check for MONGO_URL (Railway's alternative naming)
+    connection_string = os.getenv('MONGODB_URI') or os.getenv('MONGO_URL') or os.getenv('DATABASE_URL')
     if not connection_string:
-        raise RuntimeError("MONGODB_URI not set in environment or server/.env")
+        raise RuntimeError("MONGODB_URI, MONGO_URL, or DATABASE_URL not set in environment")
 
     # Fix SSL certificate verification issue on macOS
     clientMongo = MongoClient(
